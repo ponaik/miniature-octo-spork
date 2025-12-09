@@ -5,6 +5,7 @@ metadata:
   labels:
     app: kafka
 spec:
+  publishNotReadyAddresses: true
   ports:
     - port: 9092
       name: internal
