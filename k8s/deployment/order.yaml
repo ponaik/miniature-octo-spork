@@ -65,13 +65,14 @@ spec:
               value: "http://localhost:8000/realms/UserService"
           livenessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/liveness
               port: 8082
             initialDelaySeconds: 80
             periodSeconds: 20
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /actuator/health
+              path: /actuator/health/readiness
               port: 8082
-            initialDelaySeconds: 40
+            initialDelaySeconds: 20
             periodSeconds: 10
