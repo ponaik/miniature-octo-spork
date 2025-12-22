@@ -20,6 +20,7 @@ ingress:
       paths:
         - path: /
           pathType: Prefix
+  tls: []
 
 # Application Specific Configuration
 config:
@@ -32,10 +33,10 @@ config:
 
 probes:
   liveness:
-    initialDelaySeconds: 80
+    initialDelaySeconds: 60
     periodSeconds: 20
   readiness:
-    initialDelaySeconds: 40
+    initialDelaySeconds: 30
     periodSeconds: 10
 
 # Sealed Secrets Configuration
