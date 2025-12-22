@@ -1,0 +1,63 @@
+replicaCount: 1
+
+image:
+  repository: quay.io/keycloak/keycloak
+  tag: "26.4.2"
+  pullPolicy: IfNotPresent
+  command: ["start-dev"]
+
+#postgres:
+#  image:
+#    repository: postgres
+#    tag: "17-alpine"
+#  storage:
+#    size: "1Gi"
+#    className: "standard"
+
+service:
+  type: ClusterIP
+  port: 8080
+  targetPort: 8080
+
+ingress:
+  enabled: true
+  className: "nginx"
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "128k"
+  hosts:
+    - host: keycloak.local
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+
+# Application Configuration
+config:
+  hostname: "keycloak.local"
+  proxyMode: "edge"
+  dbName: "keycloak"
+
+livenessProbe:
+  httpGet:
+    path: /realms/master
+    port: 8080
+  initialDelaySeconds: 40
+  periodSeconds: 15
+  failureThreshold: 5
+
+readinessProbe:
+  httpGet:
+    path: /realms/master
+    port: 8080
+  initialDelaySeconds: 20
+  periodSeconds: 10
+
+# Sealed Secrets
+secret:
+  name: keycloak-env-secrets
+  encryptedData:
+    KEYCLOAK_ADMIN: "AgCgkG5UVor8jTNszGIOvr2+cxA2Zb79nv/L/oHq63MRhxdMk7hCw0hZTAf6AgFuJESIq73zRFES2tmIo/5QLUBs8GLsZ02cKj/5TK3+dmAZvyNaP6lJ9zf9KVNuQaLloGLzYI+TDkByTLuM9/n+ARtayps3auP3+sFuMBw31UIKYfRoUFLU4RfPjDpEAV5MMbcPZ32Y4Xrg5pkAqKljCrWes6S3wqOC6Mx1xK/bVyE5pmn6jDFf3i3c6jFVg3ezdSAJTCc5nKvEB97vLn8HvbYNlW7OpGvBaT1RPiIsaEgrv5hWNSoBe76AncMP2VrYfuCL+/QoWQfRCEFSMAseBj0IGGV+8HBzxLcbdO/kx64XApwsNRibeMHevGKxq/4/+3NMagpoyJ2S9FiIuJ0aEs1cmQv2ACU4syBvgsv1I8rrDrW6IKhos2kyx7V5oelSNGg6DAYaR7I/kzRfIvYDUBYo1832P9oaSv7tF+0W1QRRpFll0594934U54g29KnG//l/2JXAc/Av+kaOehZmqwd2ixh9vSKIFMuvIjXri6Qc9yuEsvJiWsEL+SGBoBLt0KhuJV1x3qsSlG1sigdgVIEaglf0qMaLI7fU+V7/DGOAilv1KbMWk7xreXER2d+y/ATiEgRZdNwMrLN4r2XxwhYM7HUWOCHGxexjzq2ARxXvYpS4fDwslfLYqBKqBsv2eMSfy/zCaw=="
+    KEYCLOAK_ADMIN_PASSWORD: "AgA4wCHq+viR/bWFK4nX1yiyHKgNzosrWwpmGbVFovWc1zyvWuEq+Ll+2TuGiG38XxwGZdtD59zTifMCDmgGZppzYAjvBtRn2/jAgIEyhNdaE3zJyyheZuJNpEY56QQFgEuJprpDVOmPyK6v7WmDdN+wqQuNzg6rpt1ck7wTphDrqJlDdvgnro3kj/VJWvOvS4Jo+dGyTd/W66zDkHbixZ8XZiEQHpBL1TCdh2rzlmeYtLFbkT66nXtk+7P6sHg3HOydJi+Hnce9Ez9vbnaeM6D8JJ1WRVw75QNxTfxt+ight8EnWqJ+ZtGvufUF4NFT5aSmq6B579geXusH05RXA2qQK/35/l7/a/lszQXQkYaTa8NetwK3WagJWLsqrkkX0MxSsVLJRe48MxkHIJTdA2XWYHpc9UFPMlHN41NLRG+o0BEmkIbit+sIZ2nqBt/F69kw6SIvL1we4sNe9a/HAGLpaAeJnNkIo2hbFm+mYdPWUoVob2mzRN77mvO9oD3s0gbUiJ2Q9PQ5CKGHD8cSGoxI1DR1XXccNlvJEju5ATDOCkeC7fvfqSg4GYt8liQfD7h87JObGuo5Jn89PQOE1HemBhNUoIeA87Ff+ZfUJhlpF3yBNtf5dQ3paNJ58KHOBpkmubtZ7IIiPwsxPdqw53g+p9FThGFTEPFYoNcCDrLCmQKLtI3ZsycqxsSUmB63zEx8puJH"
+    KEYCLOAK_POSTGRES_DB: "AgCii5ZhWF5mYA7A0Yyk/F4c1mtmQ6OmB0TRrpjdDOb0+fRHE8IPm8HpRNYZj8nnRRXRQIKoJ+KqftOnJDmujQ22aQ8WtujjmcqCEh+Rv4WV8oX9bbH0JK0srmc/ce13WwWshH4Syu16rpFv3/DQI15TZttLIsHV5db+aoRaDthc0TV1tOcHuxoTOIaDsRIBToycQO13mKEWCtmJ4F/zm9b/ZQv8bkdBr99XBYV/FsPXPNsdZYNOqSRgy7RBAQZilKyJJDpMEd44AAh56VYqW8n2qd8YC7tFOpjg/PxfCOdG3PyUCh4FMFnZHIESnvjKKzsPW6bCFZmTjv3kd3xtUybUrhQ2Iow6vCaHUJfeysqEqMDUNabCsDe65J34vV7DrB44Kd5BCNUiZpreymCRVCMxbm4LVybkpaTuHviF7OStA18bG1v03CJD3CkAXcdezhAOYzYZ61MWldOcwBO0d8Fa6/tDl8LoYH4XNUn23Ks8s5P27GPA9IOXND298bQw2HHmHpzEaD6Sq7WR33mmMUoREY2/cI/1QpXAro4VjvE8bgfacWIL1PMdEjRVNcifCBzHoLTdB5BoRqfzLgaeVguhWLMPE8eo442oVY/aLNaflPOd79JmSJKHpRDJTXGqm9/RrzGdxdEAazBjx4Phk60ZhWHsOYafiPC6i1fTHY8vKzYFCBxUpupQWd8Hrz0mcjnAIblj4fEOVw=="
+    KEYCLOAK_POSTGRES_PASSWORD: "AgDV+wvFoZuge+yampd4rqIMFpxKYBDib8Wh44HQFW6PlBRmjPrEuFKdIepw/NV7Kkkv+S03L4TOicfd6S3Xk2ChLs91gJuJspKyQvJvwerz3VmtSsvJamtWgBDw2PvonLfjBbCnWVBqk6M/foQ9IV2pw+XX+eZ4ctogDMdKDXhHGSmqCnOZvheg2FmCYplQtozF+14OrEyih7Wae941gr9Z9wNiAIvx7AIh0Lekf7E7uOYnpZiU6pz/LCRHjH3FaKVsb8EvM1HVFHsOS1EoAGKVnPYY8QJSEAzjWm2wR7TrKQ4srIPVeTUIG56rkkjQA+8JBe8LbAV+lVwgWyVHlVDNNsG18/JZbw8kAv5UFnEhuWHjensRS+1RFbBrSKVxwcuckIy7fhabyAI1MhLhs6RkXhnSppAb+K0thK1gCGnAQsNp5xiIwk05HlQSVQS08LAFiIMhmPIp3hTlek7/HnkMRv18/BAi5Zn0n2Hfbsu9ZVboY+pZG9Tn8ckb2mNYI8aKJbtOBwCAQtVsAnJVDWKpgvFQpBuzXFE0c1Kkti2Z5yU36IPLz30neg5+uKmKfusN/qcbxEtEeFojKF44jI/kdBynJQmKG8WpbZapQhkZdtf/d8GW91QYF29mKNuFFSZ+VxArjqsrZTINJRI78t/kHE6I1C2aqOkI5j4X/feceH7wQgum/nN3xHtNqNIz1aGvkYD8RxGQv9odtw=="
+    KEYCLOAK_POSTGRES_USER: "AgCUc60mD8QjN7/4skG/Yeh1eJ2Aw/Tz43pgCPtfWAnZFMzTRImKIjVoAmGv0fIqMkXqYJFcPzMp6fwmaUY/cZaZaYSMmyW32RoMRbZYak0eZ6EqJ4AJci2mgpHoaIDyJNaZagrpZTlTOi50lcIaibmAjxBro4CWygai9SrS80sMTE586MCYl8gANFLFtYhX0UlkupDgaZg5tQDtJHicRnN5PL+Vg0Rus07ZhfO9k61dwU/py9ypII+qJUXyvWaGoGvMp02cr1isVpC3al+VjDzUbYBozjPQgavhYZX/ZNwq39XHsBJRwz7QU6tfEAd8xLsIrsBOcVyu+bAeKp4OUvH+wI4FVh1hxw8U01nmve9kjcS8EmK+IzLrwke63C1UH/Ta222xJAgUcJVr8/IY+7fSV9UEFMJXhwnrAJb8puZ3DHqCDFOLx/VVhsaoQSLdWSOztwAA059mCVSQRpSqhlSSc2OLBql0QPgfk3zqxEzEn/gzJCxUlYPAGLvhrJpEBl8/D48IyDrD4KhYd2b97ybi3sqtq2ZKauNYZBq12LM/WASxfhuByeHnm6RgPRyLHo7VMySyA3dvFFwdN6KFwLIXXyuUGAmNbuT/lT1wvtw/20rmF3iAfLBDKGlnkL+AAhwYIfzwvPZHV4KS4Ca4A4tG/JzANiiLSUcnk0TyW2iDrZU9kI6NWlnJH3yJLBG44AtT3wjFsWO/RA=="

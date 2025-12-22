@@ -10,7 +10,7 @@ spec:
   type: ClusterIP
   ports:
     - port: 8080
-      targetPort: 8080
+      targetPort: http
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -32,6 +32,7 @@ spec:
           args: ["start-dev"]
           ports:
             - containerPort: 8080
+              name: http
           env:
             - name: KC_HOSTNAME
               value: keycloak.local
@@ -40,7 +41,6 @@ spec:
             - name: KC_DB
               value: postgres
             - name: KC_DB_URL
-              # Using the verbose service name 'keycloak-postgres'
               value: "jdbc:postgresql://keycloak-postgres:5432/keycloak"
 
             # Injecting ENV vars from the secret
@@ -59,12 +59,12 @@ spec:
                 secretKeyRef:
                   name: keycloak-env-secrets
                   key: KEYCLOAK_POSTGRES_PASSWORD
-            - name: KEYCLOAK_ADMIN
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: keycloak-env-secrets
                   key: KEYCLOAK_ADMIN
-            - name: KEYCLOAK_ADMIN_PASSWORD
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: keycloak-env-secrets
