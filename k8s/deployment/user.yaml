@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice
+  labels:
+    app: userservice
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8080
+  selector:
+    app: userservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+        - name: userservice
+          image: ponaik/userservice:1.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-secrets
+                  key: USERSERVICE_DB_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-secrets
+                  key: USERSERVICE_DB_PASS
+            - name: USERSERVICE_DB_SCHEMA
+              valueFrom:
+                secretKeyRef:
+                  name: userservice-secrets
+                  key: USERSERVICE_DB_SCHEMA
+            - name: SPRING_DATASOURCE_URL
+              value: "jdbc:postgresql://user-postgres:5432/$(USERSERVICE_DB_SCHEMA)"
+            - name: SPRING_DATA_REDIS_HOST
+              value: "user-redis"
+            - name: SPRING_DATA_REDIS_PORT
+              value: "6379"
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: "http://keycloak:8080/realms/UserService"
+            - name: OPENAPI_OAUTH_ISSUER_URI
+              value: "http://keycloak.local/realms/UserService"
+
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 40
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10

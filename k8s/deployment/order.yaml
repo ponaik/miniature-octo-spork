@@ -1,0 +1,78 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: orderservice
+  labels:
+    app: orderservice
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8080
+      targetPort: 8082
+  selector:
+    app: orderservice
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: orderservice
+  labels:
+    app: orderservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: orderservice
+  template:
+    metadata:
+      labels:
+        app: orderservice
+    spec:
+      containers:
+        - name: orderservice
+          image: ponaik/orderservice:1.1.0
+          ports:
+            - containerPort: 8082
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+
+            - name: ORDERSERVICE_DB_SCHEMA
+              valueFrom:
+                secretKeyRef:
+                  name: orderservice-env-secrets
+                  key: ORDERSERVICE_DB_SCHEMA
+            - name: ORDERSERVICE_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: orderservice-env-secrets
+                  key: ORDERSERVICE_DB_USER
+            - name: ORDERSERVICE_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: orderservice-env-secrets
+                  key: ORDERSERVICE_DB_PASS
+
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://order-postgres:5432/${ORDERSERVICE_DB_SCHEMA}
+            - name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI
+              value: "http://keycloak:8080/realms/UserService"
+            - name: USERSERVICE_BASEURL
+              value: "http://userservice:8080/api"
+            - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+              value: kafka:9092
+            - name: SWAGGER_UI_AUTHORIZATION_ISSUER_URI
+              value: "http://localhost:8000/realms/UserService"
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8082
+            initialDelaySeconds: 80
+            periodSeconds: 20
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8082
+            initialDelaySeconds: 20
+            periodSeconds: 10
