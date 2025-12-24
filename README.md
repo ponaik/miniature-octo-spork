@@ -52,3 +52,12 @@ Use the --cert flag to point to your saved public key file, and specify the inpu
 ```Bash
 kubeseal --cert pub-cert.pem -f <input.yaml> -w <output.yaml>
 ```
+
+# Database operators installation
+
+## 1. Postgres (CNPG)
+
+```bash
+helm repo add cnpg https://cloudnative-pg.github.io/charts
+helm upgrade --install cnpg cnpg/cloudnative-pg --namespace cnpg-system --create-namespace
+```
