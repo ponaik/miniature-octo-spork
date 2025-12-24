@@ -35,7 +35,7 @@ ingress:
 config:
   hostname: "keycloak.local"
   proxyMode: "edge"
-  dbName: "keycloak"
+  dbName: "postgres"
 
 livenessProbe:
   httpGet:

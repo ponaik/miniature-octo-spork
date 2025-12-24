@@ -8,4 +8,4 @@ data:
   USERSERVICE_BASEURL: {{ .Values.config.userServiceBaseUrl | quote }}
   SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.config.kafkaBootstrapServers | quote }}
   SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: {{ .Values.config.keycloakIssuerUri | quote }}
-  SWAGGER_UI_AUTHORIZATION_ISSUER_URI: {{ .Values.config.swaggerAuthIssuerUri | quote }}
+  OPENAPI_OAUTH_ISSUER_URI: {{ .Values.config.openapiOauthIssuerUri | quote }}

@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ponaik/orderservice
   pullPolicy: IfNotPresent
-  tag: "1.1.0"
+  tag: "1.1.1"
 
 service:
   type: ClusterIP
@@ -26,10 +26,10 @@ ingress:
 config:
   springProfilesActive: "prod"
   datasourceUrl: "jdbc:postgresql://order-postgres:5432/${ORDERSERVICE_DB_SCHEMA}"
-  userServiceBaseUrl: "http://userservice:8080/api"
+  userServiceBaseUrl: "http://userservice:8080"
   kafkaBootstrapServers: "kafka:9092"
   keycloakIssuerUri: "http://keycloak:8080/realms/UserService"
-  swaggerAuthIssuerUri: "http://keycloak.local/realms/UserService"
+  openapiOauthIssuerUri: "http://keycloak.local/realms/UserService"
 
 probes:
   liveness:
