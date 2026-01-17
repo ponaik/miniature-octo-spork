@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ponaik/orderservice
   pullPolicy: IfNotPresent
-  tag: "1.1.1"
+  tag: "1.1.2"
 
 service:
   type: ClusterIP
