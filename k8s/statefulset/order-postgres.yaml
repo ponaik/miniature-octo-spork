@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-postgres
+  labels:
+    app: order-postgres
+spec:
+  ports:
+    - port: 5432
+      name: postgres
+  clusterIP: None
+  selector:
+    app: order-postgres
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: order-postgres
+spec:
+  serviceName: "order-postgres"
+  replicas: 1
+  selector:
+    matchLabels:
+      app: order-postgres
+  template:
+    metadata:
+      labels:
+        app: order-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:17-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                secretKeyRef:
+                  key: ORDERSERVICE_DB_SCHEMA
+                  name: orderservice-env-secrets
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  key: ORDERSERVICE_DB_USER
+                  name: orderservice-env-secrets
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                 secretKeyRef:
+                   key: ORDERSERVICE_DB_PASS
+                   name: orderservice-env-secrets
+
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+          readinessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - exec pg_isready -U $POSTGRES_USER -d $POSTGRES_DB -h 127.0.0.1 -p 5432
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: order-data
+              mountPath: /var/lib/postgresql/data
+  volumeClaimTemplates:
+    - metadata:
+        name: order-data
+      spec:
+        accessModes: [ "ReadWriteOnce" ]
+        resources:
+          requests:
+            storage: 1Gi
