@@ -1,0 +1,17 @@
+gateway:
+  enabled: true
+  ingress:
+    enabled: false
+  basicAuth:
+    enabled: false
+
+metaMonitoring:
+  serviceMonitor:
+    enabled: false
+
+traces:
+  otlp:
+    http:
+      enabled: true
+    grpc:
+      enabled: true
