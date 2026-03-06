@@ -10,7 +10,9 @@ config:
     prometheusremotewrite:
       endpoint: http://prometheus-kube-prometheus-prometheus:9090/api/v1/write
     otlphttp/loki:
-      endpoint: http://loki-gateway:80/otlp
+      endpoint: http://loki-gateway.monitoring.svc.cluster.local:80/otlp
+      tls:
+        insecure: true
   processors:
     batch: {}
   receivers:
@@ -34,7 +36,7 @@ config:
           - otlp
       metrics:
         exporters:
-          - debug
+#          - debug
           - prometheusremotewrite
         processors:
           - batch
@@ -42,7 +44,7 @@ config:
           - otlp
       traces:
         exporters:
-          - debug
+#          - debug
           - otlphttp/tempo
         processors:
           - batch
