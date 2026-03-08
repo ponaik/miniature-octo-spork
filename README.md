@@ -52,3 +52,22 @@ Use the --cert flag to point to your saved public key file, and specify the inpu
 ```Bash
 kubeseal --cert pub-cert.pem -f <input.yaml> -w <output.yaml>
 ```
+
+# Monitoring setup
+
+kubectl create ns monitoring
+
+helm repo add open-telemetry https://open-telemetry.github.io/opentelemetry-helm-charts
+helm repo add grafana https://grafana.github.io/helm-charts
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+helm repo update
+
+helm upgrade opentelemetry-collector open-telemetry/opentelemetry-collector --values k8s/helm/otel-values.yaml -n monitoring --install
+helm upgrade prometheus prometheus-community/kube-prometheus-stack --values k8s/helm/prom-values.yaml -n monitoring --install
+helm upgrade loki grafana/loki --values k8s/helm/loki-values.yaml -n monitoring --install
+helm upgrade tempo grafana/tempo-distributed --values k8s/helm/tempo-values.yaml -n monitoring --install
+
+kubectl port-forward svc/grafana 3000:80 -n monitoring
+
+
+kubectl set resources deployment tempo-gateway -n monitoring --limits=cpu=100m,memory=256Mi

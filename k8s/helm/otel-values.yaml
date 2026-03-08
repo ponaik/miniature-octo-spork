@@ -1,0 +1,61 @@
+config:
+  extensions:
+    health_check: {}
+
+  exporters:
+    otlphttp/tempo:
+      endpoint: http://tempo-gateway:80
+      tls:
+        insecure: true
+    prometheusremotewrite:
+      endpoint: http://prometheus-kube-prometheus-prometheus:9090/api/v1/write
+    otlphttp/loki:
+      endpoint: http://loki-gateway.monitoring.svc.cluster.local:80/otlp
+      tls:
+        insecure: true
+  processors:
+    batch: {}
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 0.0.0.0:4317
+        http:
+          endpoint: 0.0.0.0:4318
+  service:
+    extensions:
+      - health_check
+    pipelines:
+      logs:
+        exporters:
+          - otlphttp/loki
+          - debug
+        processors:
+          - batch
+        receivers:
+          - otlp
+      metrics:
+        exporters:
+#          - debug
+          - prometheusremotewrite
+        processors:
+          - batch
+        receivers:
+          - otlp
+      traces:
+        exporters:
+#          - debug
+          - otlphttp/tempo
+        processors:
+          - batch
+        receivers:
+          - otlp
+    telemetry:
+      metrics:
+        address: ${env:MY_POD_IP}:8888
+image:
+  repository: otel/opentelemetry-collector-contrib
+mode: deployment
+presets:
+  kubernetesAttributes:
+    enabled: true

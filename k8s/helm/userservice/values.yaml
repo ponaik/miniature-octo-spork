@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ponaik/userservice
   pullPolicy: IfNotPresent
-  tag: "1.1.1"
+  tag: "1.2.0"
 
 service:
   type: ClusterIP
@@ -28,11 +28,15 @@ ingress:
 # Application Specific Configuration
 config:
   springProfilesActive: "prod"
+  loggingFileName: ""
   datasourceUrl: "jdbc:postgresql://user-postgres:5432/${USERSERVICE_DB_SCHEMA}"
   redisHost: "user-redis"
   redisPort: "6379"
   keycloakIssuerUri: "http://keycloak:8080/realms/UserService"
   openapiIssuerUri: "http://keycloak.local/realms/UserService"
+  otlpTracingEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
+  otlpLoggingEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/logs"
+  otlpMetricsEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"
 
 probes:
   liveness:
@@ -49,3 +53,13 @@ secret:
     USERSERVICE_DB_PASS: "AgA6/PjPrPVIlC78/G+fVFKbKOoO+1OoHEEeuuzsQi43kUWVgR8BtO56bqOq9T3130h8Pdi+35uRVKLddDvJnNInXixcxUWcSOoMQ4YQXw9nE6cubmuEAA/DUSJesNtRLid5HGImm9WrpWxkL19XtzZNXPKVN9vtPSpKSp8SkY6ZWgMvEFDeOarPudBF2cuIZF0+Q4zwjLAQQe8khKytr730NlDzcoaHtCIjvp8CSyjgSKZSkAGfci4plaKMOac0WEzK8hsuydZ8v0Mqpo8/mYVfM5SBabNQenoHP5v8l2nE7Uvlkhuy3sl54EdWwR1XftN0wM5ypfs+F7so9QPQRovi2BJgpmjyz39EbdHiBcz8tCUGOoCsT7UAd2Ses0Aqd0X9cwvu0Y2miKOb1YeA86FiD4+SF5ss+LRB3V18+FHY8Nf2d7quJvf+yugFzXns/K1WCGVIgmh+muNgqhSyT9hUC9kPyrSZFBL7KgE6PbJj0jk6xR/ulQ0A1S3MG9OF4eD32eBRwHzKrUhz5tk1e9WBdnXXa8XG+RSrX5PY9HMC6REgaNM/Xj29tU9GC383MIXMoT7/3PU8t2E4oK/4ML3CW14nIII2Fa3kMdvnsGRD2KAR9nUgoONaA1Z80+mCBeXl3o6YlbBJY7pEbmvyvsqYauW4u+hx94WzZOJ6jaHjNGQq7pHo6r1ssth4AVCIK0T3iZm0HlEwQQ=="
     USERSERVICE_DB_SCHEMA: "AgAFlFJy6crotbVYlGPV9awKjK915qsGZQ17JYsl9icqztU3OuVVOsRifKBLT6py28OmKZiCuu0SE6EdcAKstto+TIb/S9aUOeG3c2SADkmLjKvXl9gXuLjU4YqLMhFERXXqRG0G6F7vHKmgG/2RxMlUdDly8Isn0WeWKWX/I/c+PJcYoZGGoOIBlovVm1+q6LfwtDJ7W9taxMIxEoZ7Lt1BrpDMSbhPcdXrJqNVEtBuMXtBiM+gE5wr4vAFt5fPn/VBYKeXFEfBWPre7AGgYVKVgD2sfq6jq2ayPwm2lFV5XrufGp539TxI01VgSEdlDbn0DOBMQu06LpdVHpjCuDvvma9rr653CWbOuVo82qhPirPvjShlT1hMdA29jYXd2vUp1fen9UXNulKN+MSC52ljHSqpS1W8A5tJlaCfqRRT/kEuo6REdCnj8GIOk418Qe+4Z2vkCWwTZvBxFcUbgEnvdSmhhSHWjd8glIK6LJgCR0E+84yILNaQ4Hibxy5hkTfdWrHTuQ2KTWybp1FkfbW4J7g4IgXdXm9SuqQQBgi4L2prTsLhDqflN9bRkaVEGTk8dpwwVROzhJz9UPM18W4MrD6U5+S1anyOJiObtX0EqmHqsKp0kOJSM9P7lF5Wu+C4uJFlRUxXTLLzB6KefP+wylhQrnvt8RuuA+BgZld3FAFxiiz9OngBPj6QpAuNcbhZ2qp5mlI="
     USERSERVICE_DB_USER: "AgCEMAQaIXsRDgpA9oogwc63OSy2V1HjPLJJXn/VIWBguHexSru8x1mYHEpgHjAqChkHnxa44lK33R182oPyprlVJxLhniTjIEeaREDsyL/X9g45cqPYFoQRmi2l0dX6XtghDg8c2Kp8O9OIa5r342LqPFbTpBTyTlUmlhv17zcOL2HkjPDaZJOeCw0YqvXWmduCMHoWvonahiyw4yiiU2nSWZtk8VzBXiKDmG9f5wNzWZpyM4+eC1uEF+87wS3CHpT7BxUeNSgQ90DRsZJ25rtLtrgg8128YLwOCkdy7SJHUrv0VaoXblC0IA7urMSUL5PeIvmhI6Wzu0gRlNJaQzV4sL4TZRgr8mIL/bN7gmy2b13HA0H77VkIrZ5a3RzWlZzf1SnuDJAyWPun+1svxRvs9wUOjkBExidQpLknNESOjTSdHyjPKl/69sZpJcJ+8MD5uZjQUMQFnt8S2eayuDxq+HLoFsBgVIL6YBBWFJgzQjMCaAcBScrAs/DmhQ7Ec5N8Tb/Uo6UqSiE8bRxBgWftV7DdloHS9Ah5QB7Z4RKwLI3giKUesLwy+boRChqIzg9IkQdaaDYX6dxEa3BLyPcbFufxjWAwubtpeDJfehdMokFT398Wbx+N0Pm8sgQVQEAh6Y4tBt5NTwLkPcV0CMDdWnBloDFTafcvCDUPuzf1evgDbC7hsayuJNfAFB7d0YBcrrRXGt1lOw=="
+
+global:
+  resources:
+    requests:
+      memory: "384Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  javaOptions: "-Xms256m -Xmx350m -XX:+UseSerialGC"

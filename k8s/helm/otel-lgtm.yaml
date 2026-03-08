@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: monitoring
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: lgtm-data-pvc
+  namespace: monitoring
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 10Gi # Replaces your old Loki/Mimir persistence settings
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lgtm
+  namespace: monitoring
+  labels:
+    app: lgtm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lgtm
+  template:
+    metadata:
+      labels:
+        app: lgtm
+    spec:
+      containers:
+        - name: lgtm
+          image: grafana/otel-lgtm:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: grafana
+            - containerPort: 4317
+              name: otlp-grpc
+            - containerPort: 4318
+              name: otlp-http
+          volumeMounts:
+            # otel-lgtm stores its internal data here. Mounting this ensures
+            # your logs, metrics, and traces survive a pod crash.
+            - name: lgtm-data
+              mountPath: /data
+          # Optional: Mount your custom dashboards (see Step 2 below)
+          #  - name: custom-dashboards
+          #    mountPath: /grafana/dashboards/custom
+      volumes:
+        - name: lgtm-data
+          persistentVolumeClaim:
+            claimName: lgtm-data-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: opentelemetry-collector
+  namespace: monitoring
+spec:
+  selector:
+    app: lgtm
+  ports:
+    - name: grafana
+      port: 80
+      targetPort: 3000
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318

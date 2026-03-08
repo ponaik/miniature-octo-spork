@@ -11,3 +11,6 @@ data:
   PAYMENTSERVICE_BASEURL: {{ .Values.config.paymentServiceBaseUrl | quote }}
   NETWORK_AUTH_SERVICE_BASE_URL: {{ .Values.config.networkAuthServiceBaseUrl | quote }}
   OPENAPI_OAUTH_ISSUER_URI: {{ .Values.config.openapiOauthIssuerUri | quote }}
+  MANAGEMENT_OTLP_TRACING_ENDPOINT: {{ .Values.config.otlpTracingEndpoint | quote }}
+  MANAGEMENT_OTLP_LOGGING_ENDPOINT: {{ .Values.config.otlpLoggingEndpoint | quote }}
+  MANAGEMENT_OTLP_METRICS_EXPORT_URL: {{ .Values.config.otlpMetricsEndpoint | quote }}

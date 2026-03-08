@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ponaik/paymentservice
   pullPolicy: IfNotPresent
-  tag: "1.0.2"
+  tag: "1.1.2"
 
 service:
   type: ClusterIP
@@ -29,6 +29,9 @@ config:
   kafkaBootstrapServers: "kafka:9092"
   keycloakIssuerUri: "http://keycloak:8080/realms/UserService"
   openapiOauthIssuerUri: "http://keycloak.local/realms/UserService"
+  otlpTracingEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
+  otlpLoggingEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/logs"
+  otlpMetricsEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"
 
 # Full Probe Configuration
 livenessProbe:
@@ -45,3 +48,13 @@ readinessProbe:
     port: 8080
   initialDelaySeconds: 20
   periodSeconds: 10
+
+global:
+  resources:
+    requests:
+      memory: "384Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  javaOptions: "-Xms256m -Xmx350m -XX:+UseSerialGC"

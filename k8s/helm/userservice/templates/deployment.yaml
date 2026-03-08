@@ -40,6 +40,8 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.secret.name }}
                   key: USERSERVICE_DB_PASS
+            - name: JAVA_OPTS
+              value: {{ .Values.global.javaOptions | quote }}
 
           livenessProbe:
             httpGet:
@@ -53,3 +55,14 @@ spec:
               port: {{ .Values.service.targetPort }}
             initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
             periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+          resources:
+            {{- if .Values.resources }}
+            {{- toYaml .Values.resources | nindent 12 }}
+            {{- else }}
+            requests:
+              memory: {{ .Values.global.resources.requests.memory | quote }}
+              cpu: {{ .Values.global.resources.requests.cpu | quote }}
+            limits:
+              memory: {{ .Values.global.resources.limits.memory | quote }}
+              cpu: {{ .Values.global.resources.limits.cpu | quote }}
+            {{- end }}

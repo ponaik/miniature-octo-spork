@@ -36,6 +36,14 @@ config:
   hostname: "keycloak.local"
   proxyMode: "edge"
   dbName: "postgres"
+  features: "opentelemetry" #,opentelemetry-logs,opentelemetry-metrics
+  telemetry:
+    metricsEnabled: true
+    tracingEnabled: true
+    logsEnabled: true
+    endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4317"
+    protocol: "grpc"
+    serviceName: "keycloak-auth"
 
 livenessProbe:
   httpGet:
@@ -61,3 +69,13 @@ secret:
     KEYCLOAK_POSTGRES_DB: "AgCii5ZhWF5mYA7A0Yyk/F4c1mtmQ6OmB0TRrpjdDOb0+fRHE8IPm8HpRNYZj8nnRRXRQIKoJ+KqftOnJDmujQ22aQ8WtujjmcqCEh+Rv4WV8oX9bbH0JK0srmc/ce13WwWshH4Syu16rpFv3/DQI15TZttLIsHV5db+aoRaDthc0TV1tOcHuxoTOIaDsRIBToycQO13mKEWCtmJ4F/zm9b/ZQv8bkdBr99XBYV/FsPXPNsdZYNOqSRgy7RBAQZilKyJJDpMEd44AAh56VYqW8n2qd8YC7tFOpjg/PxfCOdG3PyUCh4FMFnZHIESnvjKKzsPW6bCFZmTjv3kd3xtUybUrhQ2Iow6vCaHUJfeysqEqMDUNabCsDe65J34vV7DrB44Kd5BCNUiZpreymCRVCMxbm4LVybkpaTuHviF7OStA18bG1v03CJD3CkAXcdezhAOYzYZ61MWldOcwBO0d8Fa6/tDl8LoYH4XNUn23Ks8s5P27GPA9IOXND298bQw2HHmHpzEaD6Sq7WR33mmMUoREY2/cI/1QpXAro4VjvE8bgfacWIL1PMdEjRVNcifCBzHoLTdB5BoRqfzLgaeVguhWLMPE8eo442oVY/aLNaflPOd79JmSJKHpRDJTXGqm9/RrzGdxdEAazBjx4Phk60ZhWHsOYafiPC6i1fTHY8vKzYFCBxUpupQWd8Hrz0mcjnAIblj4fEOVw=="
     KEYCLOAK_POSTGRES_PASSWORD: "AgDV+wvFoZuge+yampd4rqIMFpxKYBDib8Wh44HQFW6PlBRmjPrEuFKdIepw/NV7Kkkv+S03L4TOicfd6S3Xk2ChLs91gJuJspKyQvJvwerz3VmtSsvJamtWgBDw2PvonLfjBbCnWVBqk6M/foQ9IV2pw+XX+eZ4ctogDMdKDXhHGSmqCnOZvheg2FmCYplQtozF+14OrEyih7Wae941gr9Z9wNiAIvx7AIh0Lekf7E7uOYnpZiU6pz/LCRHjH3FaKVsb8EvM1HVFHsOS1EoAGKVnPYY8QJSEAzjWm2wR7TrKQ4srIPVeTUIG56rkkjQA+8JBe8LbAV+lVwgWyVHlVDNNsG18/JZbw8kAv5UFnEhuWHjensRS+1RFbBrSKVxwcuckIy7fhabyAI1MhLhs6RkXhnSppAb+K0thK1gCGnAQsNp5xiIwk05HlQSVQS08LAFiIMhmPIp3hTlek7/HnkMRv18/BAi5Zn0n2Hfbsu9ZVboY+pZG9Tn8ckb2mNYI8aKJbtOBwCAQtVsAnJVDWKpgvFQpBuzXFE0c1Kkti2Z5yU36IPLz30neg5+uKmKfusN/qcbxEtEeFojKF44jI/kdBynJQmKG8WpbZapQhkZdtf/d8GW91QYF29mKNuFFSZ+VxArjqsrZTINJRI78t/kHE6I1C2aqOkI5j4X/feceH7wQgum/nN3xHtNqNIz1aGvkYD8RxGQv9odtw=="
     KEYCLOAK_POSTGRES_USER: "AgCUc60mD8QjN7/4skG/Yeh1eJ2Aw/Tz43pgCPtfWAnZFMzTRImKIjVoAmGv0fIqMkXqYJFcPzMp6fwmaUY/cZaZaYSMmyW32RoMRbZYak0eZ6EqJ4AJci2mgpHoaIDyJNaZagrpZTlTOi50lcIaibmAjxBro4CWygai9SrS80sMTE586MCYl8gANFLFtYhX0UlkupDgaZg5tQDtJHicRnN5PL+Vg0Rus07ZhfO9k61dwU/py9ypII+qJUXyvWaGoGvMp02cr1isVpC3al+VjDzUbYBozjPQgavhYZX/ZNwq39XHsBJRwz7QU6tfEAd8xLsIrsBOcVyu+bAeKp4OUvH+wI4FVh1hxw8U01nmve9kjcS8EmK+IzLrwke63C1UH/Ta222xJAgUcJVr8/IY+7fSV9UEFMJXhwnrAJb8puZ3DHqCDFOLx/VVhsaoQSLdWSOztwAA059mCVSQRpSqhlSSc2OLBql0QPgfk3zqxEzEn/gzJCxUlYPAGLvhrJpEBl8/D48IyDrD4KhYd2b97ybi3sqtq2ZKauNYZBq12LM/WASxfhuByeHnm6RgPRyLHo7VMySyA3dvFFwdN6KFwLIXXyuUGAmNbuT/lT1wvtw/20rmF3iAfLBDKGlnkL+AAhwYIfzwvPZHV4KS4Ca4A4tG/JzANiiLSUcnk0TyW2iDrZU9kI6NWlnJH3yJLBG44AtT3wjFsWO/RA=="
+
+global:
+  resources:
+    requests:
+      memory: "384Mi"
+      cpu: "100m"
+    limits:
+      memory: "640Mi"
+      cpu: "1"
+  javaOptions: "-Xms256m -Xmx400m -XX:+UseSerialGC"

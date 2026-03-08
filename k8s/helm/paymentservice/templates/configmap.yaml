@@ -10,3 +10,6 @@ data:
   SPRING_KAFKA_BOOTSTRAP_SERVERS: {{ .Values.config.kafkaBootstrapServers | quote }}
   SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: {{ .Values.config.keycloakIssuerUri | quote }}
   OPENAPI_OAUTH_ISSUER_URI: {{ .Values.config.openapiOauthIssuerUri | quote }}
+  MANAGEMENT_OPENTELEMETRY_TRACING_EXPORT_OTLP_ENDPOINT: {{ .Values.config.otlpTracingEndpoint | quote }}
+  MANAGEMENT_OPENTELEMETRY_LOGGING_EXPORT_OTLP_ENDPOINT: {{ .Values.config.otlpLoggingEndpoint | quote }}
+  MANAGEMENT_OTLP_METRICS_EXPORT_URL: {{ .Values.config.otlpMetricsEndpoint | quote }}
