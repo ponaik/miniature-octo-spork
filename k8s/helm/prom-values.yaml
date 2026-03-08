@@ -1,4 +1,9 @@
 grafana:
+  sidecar:
+    dashboards:
+      env:
+        - name: REQ_TIMEOUT
+          value: "30"
   enabled: true
   additionalDataSources:
     - name: Loki

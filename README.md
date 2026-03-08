@@ -68,3 +68,6 @@ helm upgrade loki grafana/loki --values k8s/helm/loki-values.yaml -n monitoring 
 helm upgrade tempo grafana/tempo-distributed --values k8s/helm/tempo-values.yaml -n monitoring --install
 
 kubectl port-forward svc/grafana 3000:80 -n monitoring
+
+
+kubectl set resources deployment tempo-gateway -n monitoring --limits=cpu=100m,memory=256Mi
