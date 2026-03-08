@@ -36,6 +36,14 @@ config:
   hostname: "keycloak.local"
   proxyMode: "edge"
   dbName: "postgres"
+  features: "opentelemetry" #,opentelemetry-logs,opentelemetry-metrics
+  telemetry:
+    metricsEnabled: true
+    tracingEnabled: true
+    logsEnabled: true
+    endpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4317"
+    protocol: "grpc"
+    serviceName: "keycloak-auth"
 
 livenessProbe:
   httpGet:

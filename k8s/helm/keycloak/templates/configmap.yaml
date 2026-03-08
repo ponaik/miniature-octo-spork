@@ -8,3 +8,10 @@ data:
   KC_HOSTNAME: {{ .Values.config.hostname | quote }}
   KC_PROXY: {{ .Values.config.proxyMode | quote }}
   KC_DB: {{ .Values.config.dbName | quote }}
+  KC_FEATURES: {{ .Values.config.features | quote }}
+  KC_METRICS_ENABLED: {{ .Values.config.telemetry.metricsEnabled | quote }}
+  KC_TRACING_ENABLED: {{ .Values.config.telemetry.tracingEnabled | quote }}
+  KC_TELEMETRY_ENDPOINT: {{ .Values.config.telemetry.endpoint | quote }}
+  KC_TELEMETRY_METRICS_ENABLED: {{ .Values.config.telemetry.metricsEnabled | quote }}
+  KC_TELEMETRY_PROTOCOL: {{ .Values.config.telemetry.protocol | default "grpc" | quote }}
+  KC_TELEMETRY_LOGS_ENABLED: {{ .Values.config.telemetry.logsEnabled | quote }}

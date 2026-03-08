@@ -11,3 +11,7 @@ data:
   SPRING_DATA_REDIS_PORT: {{ .Values.config.redisPort | quote }}
   SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: {{ .Values.config.keycloakIssuerUri | quote }}
   OPENAPI_OAUTH_ISSUER_URI: {{ .Values.config.openapiIssuerUri | quote }}
+  MANAGEMENT_OTLP_TRACING_ENDPOINT: {{ .Values.config.otlpTracingEndpoint | quote }}
+  MANAGEMENT_OTLP_LOGGING_ENDPOINT: {{ .Values.config.otlpLoggingEndpoint | quote }}
+  MANAGEMENT_OTLP_METRICS_EXPORT_URL: {{ .Values.config.otlpMetricsEndpoint | quote }}
+  LOGGING_FILE_NAME: {{ .Values.config.loggingFileName | quote }}

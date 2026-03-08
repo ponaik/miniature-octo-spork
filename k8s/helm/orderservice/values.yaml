@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: ponaik/orderservice
   pullPolicy: IfNotPresent
-  tag: "1.1.2"
+  tag: "1.2.0"
 
 service:
   type: ClusterIP
@@ -25,11 +25,15 @@ ingress:
 # Application Specific Configuration
 config:
   springProfilesActive: "prod"
+  loggingFileName: ""
   datasourceUrl: "jdbc:postgresql://order-postgres:5432/${ORDERSERVICE_DB_SCHEMA}"
   userServiceBaseUrl: "http://userservice:8080"
   kafkaBootstrapServers: "kafka:9092"
   keycloakIssuerUri: "http://keycloak:8080/realms/UserService"
   openapiOauthIssuerUri: "http://keycloak.local/realms/UserService"
+  otlpTracingEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/traces"
+  otlpLoggingEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/logs"
+  otlpMetricsEndpoint: "http://opentelemetry-collector.monitoring.svc.cluster.local:4318/v1/metrics"
 
 probes:
   liveness:
